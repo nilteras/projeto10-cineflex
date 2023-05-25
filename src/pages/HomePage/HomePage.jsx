@@ -2,10 +2,11 @@ import styled from "styled-components"
 import Movie from './../../components/Movie'
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
 
-    const [movies, setMovies] = useState([]);
+    const [movies, setMovies] = useState(null);
 
     useEffect(() => {
         const URL = 'https://mock-api.driven.com.br/api/v8/cineflex/movies'
@@ -21,7 +22,7 @@ export default function HomePage() {
         });
     }, []);
 
-    if (movies.length === 0) {
+    if (movies === null) {
         return (<div> Carregando....</div>);
     }
 
@@ -34,11 +35,12 @@ export default function HomePage() {
 
                 {movies.map((m) => (
                     <MovieContainer key={m.id}>
-                        <Movie
-                            
-                            image={m.posterURL}
-                            description={m.title}
-                        />
+                        <Link to='/sessions'>
+                            <Movie
+                                image={m.posterURL}
+                                description={m.title}
+                            />
+                        </Link>
                     </MovieContainer>
 
                 ))}
