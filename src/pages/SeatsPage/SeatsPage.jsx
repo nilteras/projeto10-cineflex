@@ -1,30 +1,69 @@
-import styled from "styled-components"
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import styled, { css } from "styled-components"
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function SeatsPage() {
 
+    const parametro = useParams();
+
+    const [seats, setSeats] = useState([]);
+    const [corSeats, setcorSeats] = useState(true);
+
+
+    useEffect(() => {
+
+        const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${parametro.idSession}/seats`
+        
+
+        const promise = axios.get(URL);
+
+        promise.then((resposta) => {
+            setSeats(resposta.data.seats);
+            console.log(resposta.data.seats);
+
+        }
+        );
+        promise.catch((erro) => {
+            console.log(erro.response.data);
+            console.log('ta dando erro');
+        });
+    }, []);
+
+
+    //
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+                {seats.map((s) => (
+                  
+                    (s.isAvailable ? (
+                        <SeatItem >{s.name} </SeatItem>
+                    ) : (
+                        <SeatItem yellow>{s.name} </SeatItem>
+                    ))
+
+                    
+
+                    
+                ))}
+                
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle green/>
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle gray />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle yellow/>
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
@@ -97,7 +136,7 @@ const CaptionContainer = styled.div`
 `
 const CaptionCircle = styled.div`
     border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    background-color: #C3CFD9;    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -105,6 +144,20 @@ const CaptionCircle = styled.div`
     align-items: center;
     justify-content: center;
     margin: 5px 3px;
+
+    ${props =>
+        props.green && css`
+   background-color: #1AAE9E;;
+  `};
+
+  ${props =>
+        props.gray && css`
+   background-color:#C3CFD9;
+  `};
+  ${props =>
+        props.yellow && css`
+   background-color:#FBE192;
+  `};
 `
 const CaptionItem = styled.div`
     display: flex;
@@ -114,7 +167,7 @@ const CaptionItem = styled.div`
 `
 const SeatItem = styled.div`
     border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    background-color: #C3CFD9;    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -124,6 +177,19 @@ const SeatItem = styled.div`
     align-items: center;
     justify-content: center;
     margin: 5px 3px;
+    ${props =>
+        props.green && css`
+   background-color: #1AAE9E;;
+  `};
+
+  ${props =>
+        props.gray && css`
+   background-color:#C3CFD9;
+  `};
+  ${props =>
+        props.yellow && css`
+   background-color:#FBE192;
+  `};
 `
 const FooterContainer = styled.div`
     width: 100%;

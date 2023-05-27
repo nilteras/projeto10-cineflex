@@ -23,7 +23,7 @@ export default function App() {
                 
                 <Route path='/' element={<HomePage />} />
                 <Route path='/sessions/:idMovie' element={<SessionsPage />} />
-                <Route path='/seats' element={<SeatsPage />} />
+                <Route path='/seats/:idSession' element={<SeatsPage />} />
                 <Route path='/success' element={<SuccessPage />} />
     
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function SessionsPage() {
 
@@ -19,6 +20,7 @@ export default function SessionsPage() {
         promise.then((resposta) => {
             setSessions(resposta.data.days);
             console.log(resposta.data.days);
+            
 
         }
         );
@@ -36,10 +38,12 @@ export default function SessionsPage() {
                 {session.map((s) => (
                     <SessionContainer >
                         {s.weekday} - {s.date}
-                       {s.showtimes.map((ss) => (
+                        {s.showtimes.map((ss) => (
+                             <Link to={`/seats/${ss.id}`}>
                             <ButtonsContainer >
                                 <button>{ss.name}</button>
                             </ButtonsContainer>
+                            </Link>
                         ))}
 
                     </SessionContainer>
@@ -97,6 +101,7 @@ const ButtonsContainer = styled.div`
     a {
         text-decoration: none;
     }
+    
 `
 const FooterContainer = styled.div`
     width: 100%;
