@@ -15,7 +15,7 @@ export default function SeatsPage() {
     useEffect(() => {
 
         const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${parametro.idSession}/seats`
-        
+
 
         const promise = axios.get(URL);
 
@@ -39,23 +39,22 @@ export default function SeatsPage() {
 
             <SeatsContainer>
                 {seats.map((s) => (
-                  
                     (s.isAvailable ? (
-                        <SeatItem >{s.name} </SeatItem>
+                        <SeatItem key={s.id} data-test="seat">
+                            {s.name}
+                        </SeatItem>
                     ) : (
-                        <SeatItem yellow>{s.name} </SeatItem>
+                        <SeatItem yellow key={s.id} data-test="seat">
+                            {s.name}
+                        </SeatItem>
                     ))
-
-                    
-
-                    
                 ))}
-                
+
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle green/>
+                    <CaptionCircle green />
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
@@ -63,22 +62,22 @@ export default function SeatsPage() {
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle yellow/>
+                    <CaptionCircle yellow />
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
             <FormContainer>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <input data-test="client-name" placeholder="Digite seu nome..." />
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <input data-test="client-cpf" placeholder="Digite seu CPF..." />
 
-                <button>Reservar Assento(s)</button>
+                <button data-test="book-seat-btn">Reservar Assento(s)</button>
             </FormContainer>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
                 </div>
