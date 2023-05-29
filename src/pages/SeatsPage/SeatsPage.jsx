@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled, { css } from "styled-components"
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -11,7 +11,15 @@ export default function SeatsPage() {
 
     const [seatsSession, setSeatsSession] = useState(null);
     const [color, setColor] = useState("#C3CFD9");
-    const [status, setStatus] = useState([]);
+    const [clientName, setClientName] = useState('');
+    const [clientCpf, setClientCpf] = useState('');
+    const [clicked, setClicked] = useState('');
+    const [nameMovie, setNameMovie] =useState('');
+    const [dateMovie, setDateMovie] =useState('');
+    const [timeMovie, setTimeMovie] =useState('');
+   
+
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -23,8 +31,9 @@ export default function SeatsPage() {
 
         promise.then((resposta) => {
             setSeatsSession(resposta.data);
-            console.log(resposta.data);
-            
+            console.log(resposta.data.seats);
+
+
 
         }
         );
@@ -36,77 +45,124 @@ export default function SeatsPage() {
 
     function selectSeat(number) {
         setColor("#1AAE9E");
+         const newArray = ([...clicked, number])
+         setClicked(newArray)
+         console.log(newArray)
+    
 
-        if (color === "#1AAE9E") {
-            setColor("#C3CFD9")
-        }
+    if (color === "#1AAE9E") {
+        setColor("#C3CFD9")
+
+
     }
+}
 
-    if (seatsSession === null) {
-        return (
-
-            <div>Carregando...</div>
-
-        )
-    }
-
-
+if (seatsSession === null) {
     return (
-        <PageContainer>
-            Selecione o(s) assento(s)
 
-            <SeatsContainer>
-                {seatsSession.seats.map((s) => (
-                    (s.isAvailable ? (
-                        <SeatItem color={color} key={s.id} data-test="seat" onClick={() => selectSeat(s.name)}>
-                            {s.name}
-                        </SeatItem>
-                    ) : (
-                        <SeatItem color={"#FBE192"} key={s.id} data-test="seat" onClick={() => alert('Esse assento não está disponível')} >
-                            {s.name}
-                        </SeatItem>
-                    ))
-                ))}
+        <div>Carregando...</div>
 
-            </SeatsContainer>
-
-            <CaptionContainer>
-                <CaptionItem>
-                    <CaptionCircle green />
-                    Selecionado
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle gray />
-                    Disponível
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle yellow />
-                    Indisponível
-                </CaptionItem>
-            </CaptionContainer>
-
-            <FormContainer>
-                Nome do Comprador:
-                <input data-test="client-name" placeholder="Digite seu nome..." />
-
-                CPF do Comprador:
-                <input data-test="client-cpf" placeholder="Digite seu CPF..." />
-
-                <button data-test="book-seat-btn">Reservar Assento(s)</button>
-            </FormContainer>
-
-            <FooterContainer data-test="footer">
-                <Footer
-                    image={seatsSession.movie.posterURL}
-                    title={seatsSession.movie.title}
-                    day={seatsSession.day.weekday}
-                    time={seatsSession.name}
-
-                />
-            </FooterContainer>
-
-        </PageContainer>
     )
+}
+
+// function turnIdentifications(){
+//     setNameMovie(seatsSession.movie.title)
+//     setDateMovie(seatsSession.day.date)
+//     setTimeMovie(seatsSession.name)
+// }
+
+// turnIdentifications();
+
+function addInfClient(e) {
+    e.preventDefault();
+
+    const informations = { ids: clicked, name: clientName, cpf: clientCpf };
+    console.log(informations);
+
+    const url_post = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many"
+    const promise = axios.post(url_post, informations)
+
+    promise.then(navigate("/sucesso"))
+    promise.catch(err => console.log(err.response.data))
+
+}
+
+return (
+    <PageContainer>
+        Selecione o(s) assento(s)
+
+        <SeatsContainer>
+            {seatsSession.seats.map((s) => (
+                (s.isAvailable ? (
+                    <SeatItem color={color} key={s.id} data-test="seat" onClick={() => selectSeat(s.id)}>
+                        {s.name}
+                    </SeatItem>
+                ) : (
+                    <SeatItem color={"#FBE192"} key={s.id} data-test="seat" onClick={() => alert('Esse assento não está disponível')} >
+                        {s.name}
+                    </SeatItem>
+                ))
+            ))}
+
+        </SeatsContainer>
+
+        <CaptionContainer>
+            <CaptionItem>
+                <CaptionCircle green />
+                Selecionado
+            </CaptionItem>
+            <CaptionItem>
+                <CaptionCircle gray />
+                Disponível
+            </CaptionItem>
+            <CaptionItem>
+                <CaptionCircle yellow />
+                Indisponível
+            </CaptionItem>
+        </CaptionContainer>
+
+        <form onSubmit={addInfClient} >
+            <FormContainer>
+                <Title forHtml="name">Nome do comprador:</Title>
+                <input
+                    data-test="client-name"
+                    id="name"
+                    type="text"
+                    placeholder="Digite seu nome..."
+                    value={clientName}
+                    onChange={e => setClientName(e.target.value)}
+                    required
+                />
+
+
+                <Title forHtml="cpf">CPF do comprador:</Title>
+                <input
+                    data-test="client-cpf"
+                    placeholder="Digite seu CPF..."
+                    id="cpf"
+                    type="text"
+                    maxLength={11}
+                    minLength={11}
+                    value={clientCpf}
+                    onChange={e => setClientCpf(e.target.value)}
+                    required
+                />
+                <button data-test="book-seat-btn" type="submit" >Reservar Assento(s)</button>
+            </FormContainer>
+        </form>
+
+        <FooterContainer data-test="footer">
+            <Footer
+                image={seatsSession.movie.posterURL}
+                title={seatsSession.movie.title}
+                day={seatsSession.day.weekday}
+                time={seatsSession.name}
+
+            />
+        </FooterContainer>
+
+    </PageContainer>
+)
 }
 
 const PageContainer = styled.div`
@@ -144,6 +200,14 @@ const FormContainer = styled.div`
         width: calc(100vw - 60px);
     }
 `
+const Title = styled.label`
+
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 21px;
+    color: #293845;
+`
+
 const CaptionContainer = styled.div`
     display: flex;
     flex-direction: row;
