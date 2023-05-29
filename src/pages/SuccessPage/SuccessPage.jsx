@@ -2,20 +2,20 @@ import { Link } from "react-router-dom"
 import styled from "styled-components"
 
 
-export default function SuccessPage({clicked, clientName, clientCpf, nameMovie, dateMovie, timeMovie, setClicked, setClientName, setClientCpf, setNameMovie, setDateMovie, setTimeMovie}) {
-    if(clicked === []){
-        return(
+export default function SuccessPage({ clicked, clientName, clientCpf, nameMovie, dateMovie, timeMovie, setClicked, setClientName, setClientCpf, setNameMovie, setDateMovie, setTimeMovie }) {
+    if (clicked === []) {
+        return (
             <div>Carregando...</div>
         )
     }
-    
-    function clearInfos(){
+
+    function clearInfos() {
         setClicked([])
-         setClientName("") 
-         setClientCpf("")
-         setNameMovie("")
-         setDateMovie("")
-         setTimeMovie("")
+        setClientName("")
+        setClientCpf("")
+        setNameMovie("")
+        setDateMovie("")
+        setTimeMovie("")
     }
 
     return (
@@ -31,7 +31,7 @@ export default function SuccessPage({clicked, clientName, clientCpf, nameMovie, 
             <TextContainer data-test="seats-info">
                 <strong><p>Ingressos</p></strong>
                 <p>Assento 01</p>
-              
+
             </TextContainer>
 
             <TextContainer data-test="client-info">
@@ -39,8 +39,9 @@ export default function SuccessPage({clicked, clientName, clientCpf, nameMovie, 
                 <p>Nome: {clientName}</p>
                 <p>CPF: {clientCpf}</p>
             </TextContainer>
-
-            <button data-test="go-home-btn" onClick={(clearInfos)}>Voltar para Home</button>
+            <Link to="/">
+                <button data-test="go-home-btn" onClick={(clearInfos)}>Voltar para Home</button>
+            </Link>
         </PageContainer>
     )
 }
