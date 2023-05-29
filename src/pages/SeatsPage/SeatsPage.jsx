@@ -3,13 +3,15 @@ import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components"
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Footer from "../../components/Footer";
 
 export default function SeatsPage() {
 
     const parametro = useParams();
 
-    const [seats, setSeats] = useState([]);
-    const [corSeats, setcorSeats] = useState(true);
+    const [seatsSession, setSeatsSession] = useState(null);
+    const [color, setColor] = useState("#C3CFD9");
+    const [status, setStatus] = useState([]);
 
 
     useEffect(() => {
@@ -20,8 +22,9 @@ export default function SeatsPage() {
         const promise = axios.get(URL);
 
         promise.then((resposta) => {
-            setSeats(resposta.data.seats);
-            console.log(resposta.data.seats);
+            setSeatsSession(resposta.data);
+            console.log(resposta.data);
+            
 
         }
         );
@@ -31,20 +34,35 @@ export default function SeatsPage() {
         });
     }, []);
 
+    function selectSeat(number) {
+        setColor("#1AAE9E");
 
-    //
+        if (color === "#1AAE9E") {
+            setColor("#C3CFD9")
+        }
+    }
+
+    if (seatsSession === null) {
+        return (
+
+            <div>Carregando...</div>
+
+        )
+    }
+
+
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                {seats.map((s) => (
+                {seatsSession.seats.map((s) => (
                     (s.isAvailable ? (
-                        <SeatItem key={s.id} data-test="seat">
+                        <SeatItem color={color} key={s.id} data-test="seat" onClick={() => selectSeat(s.name)}>
                             {s.name}
                         </SeatItem>
                     ) : (
-                        <SeatItem yellow key={s.id} data-test="seat">
+                        <SeatItem color={"#FBE192"} key={s.id} data-test="seat" onClick={() => alert('Esse assento não está disponível')} >
                             {s.name}
                         </SeatItem>
                     ))
@@ -78,13 +96,13 @@ export default function SeatsPage() {
             </FormContainer>
 
             <FooterContainer data-test="footer">
-                <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                </div>
-                <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
-                </div>
+                <Footer
+                    image={seatsSession.movie.posterURL}
+                    title={seatsSession.movie.title}
+                    day={seatsSession.day.weekday}
+                    time={seatsSession.name}
+
+                />
             </FooterContainer>
 
         </PageContainer>
@@ -146,16 +164,19 @@ const CaptionCircle = styled.div`
 
     ${props =>
         props.green && css`
-   background-color: #1AAE9E;;
+   background-color: #1AAE9E;
+   border: 1px solid #1AAE9E;
   `};
 
   ${props =>
         props.gray && css`
    background-color:#C3CFD9;
+   border: 1px solid #C3CFD9;
   `};
   ${props =>
         props.yellow && css`
    background-color:#FBE192;
+   border: 1px solid #FBE192;
   `};
 `
 const CaptionItem = styled.div`
@@ -166,7 +187,7 @@ const CaptionItem = styled.div`
 `
 const SeatItem = styled.div`
     border: 1px solid blue;         // Essa cor deve mudar
-    background-color: #C3CFD9;    // Essa cor deve mudar
+    background-color: ${props => props.color};     // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -176,19 +197,23 @@ const SeatItem = styled.div`
     align-items: center;
     justify-content: center;
     margin: 5px 3px;
-    ${props =>
+    cursor: pointer;
+    /* ${props =>
         props.green && css`
-   background-color: #1AAE9E;;
+   background-color: #1AAE9E;
+   border: 1px solid #1AAE9E;
   `};
 
   ${props =>
         props.gray && css`
    background-color:#C3CFD9;
+   border: 1px solid #C3CFD9;
   `};
   ${props =>
         props.yellow && css`
    background-color:#FBE192;
-  `};
+   border: 1px solid #FBE192;
+  `}; */
 `
 const FooterContainer = styled.div`
     width: 100%;

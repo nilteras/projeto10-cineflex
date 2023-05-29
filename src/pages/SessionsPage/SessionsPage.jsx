@@ -3,12 +3,15 @@ import styled from "styled-components";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Footer from "../../components/Footer";
+import React from "react";
 
 export default function SessionsPage() {
 
     const parametro = useParams();
 
-    const [session, setSessions] = useState([]);
+    const [session, setSessions] = useState(null);
+
 
 
     useEffect(() => {
@@ -18,31 +21,41 @@ export default function SessionsPage() {
         const promise = axios.get(URL);
 
         promise.then((resposta) => {
-            setSessions(resposta.data.days);
+            setSessions(resposta.data);
+            console.log(resposta.data);
+
             console.log(resposta.data.days);
-            
+
 
         }
         );
         promise.catch((erro) => {
             console.log(erro.response.data);
-            console.log('ta dando erro');
+            console.log('erro');
         });
     }, []);
+
+    if (session === null) {
+        return (
+
+            <div>Carregando...</div>
+
+        )
+    }
 
     return (
         <PageContainer>
             Selecione o horário
             <div>
 
-                {session.map((s) => (
+                {session.days.map((s) => (
                     <SessionContainer key={s.id} data-test="movie-day">
                         {s.weekday} - {s.date}
                         {s.showtimes.map((ss) => (
-                             <Link to={`/assentos/${ss.id}`} key={ss.id}>
-                            <ButtonsContainer data-test="showtime">
-                                <button>{ss.name}</button>
-                            </ButtonsContainer>
+                            <Link to={`/assentos/${ss.id}`} key={ss.id}>
+                                <ButtonsContainer data-test="showtime">
+                                    <button>{ss.name}</button>
+                                </ButtonsContainer>
                             </Link>
                         ))}
 
@@ -55,14 +68,17 @@ export default function SessionsPage() {
 
             </div>
 
+
             <FooterContainer data-test="footer">
-                <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                </div>
-                <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                </div>
+                <Footer
+                    image={session.posterURL}
+                    title={session.title}
+
+                />
             </FooterContainer>
+
+
+
 
         </PageContainer>
     )
